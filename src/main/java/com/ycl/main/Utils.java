@@ -1,4 +1,4 @@
-package main;
+package com.ycl.main;
 
 import java.awt.*;
 import java.time.LocalDateTime;

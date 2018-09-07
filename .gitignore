@@ -1,0 +1,10 @@
+ *.class
+ *.iml
+ /target/
+ /test/
+ .idea/
+ target/
+ out/
+ setting
+ .project
+ /target
