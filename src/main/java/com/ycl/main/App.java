@@ -1,6 +1,11 @@
 package com.ycl.main;
 
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
 import javax.swing.*;
@@ -9,7 +14,9 @@ import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -18,11 +25,6 @@ import java.util.Objects;
  * @dateTime 2018/9/7 15:35
  */
 
-
-/**
- * @author Yin Changlei
- * @dateTime 2018/8/10 15:03
- */
 public class App extends JFrame implements ActionListener {
 
     private JPanel jPanel;
@@ -131,8 +133,42 @@ public class App extends JFrame implements ActionListener {
         String subName = name.substring(0, name.lastIndexOf("."));
         String excelFileName = folderPath + "\\" + subName + ".xlsx";
         File excelFile = new File(excelFileName);
+        try {
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(csvFile), "UTF-8");
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            OutputStream outputStream=new FileOutputStream(excelFile);
+            List<String> list = new ArrayList<>();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                list.add(line);
+            }
+            bufferedReader.close();
+            reader.close();
+            buildWorkbook(list,outputStream);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
-        System.out.println(excelFileName);
+    private void buildWorkbook(List<String> contents,OutputStream outputStream) {
+        if (contents == null || contents.size() == 0) return;
+        try {
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet();
+            for (int i = 0; i < contents.size(); i++) {
+                Row row = sheet.createRow(i);
+                String[] strs = contents.get(i).split(",");
+                for (int j = 0; j < strs.length; j++) {
+                    Cell cell = row.createCell(j);
+                    cell.setCellValue(strs[j]);
+                }
+            }
+            workbook.write(outputStream);
+            workbook.close();
+        } catch (Exception ex) {
+            lblInfo.setText(ex.getMessage());
+        }
+
     }
 
 
