@@ -30,6 +30,7 @@ public class App extends JFrame implements ActionListener {
     private JPanel jPanel;
     private JButton btnChooseFile;
     private JTextField txtCsvFile;
+    private JComboBox<String> jcbCharset;
     private JButton btnStart;
     private JLabel lblInfo;
 
@@ -46,6 +47,11 @@ public class App extends JFrame implements ActionListener {
         btnChooseFile.setBounds(10, 10, 100, 30);
         btnChooseFile.addActionListener(this);
         jPanel.add(btnChooseFile);
+
+        String []charsetList={"UTF-8","GBK","GB2312","BIG5"};
+        jcbCharset=new JComboBox(charsetList);
+        jcbCharset.setBounds(120,10,100,30);
+        jPanel.add(jcbCharset);
 
         txtCsvFile = new JTextField();
         txtCsvFile.setBounds(10, 50, 400, 30);
@@ -101,7 +107,9 @@ public class App extends JFrame implements ActionListener {
                 lblInfo.setText("请行选择Csv文件");
                 return;
             }
-            transferToExcel(path);
+            String charsetName=jcbCharset.getSelectedItem().toString();
+            System.out.println(charsetName);
+            transferToExcel(path,charsetName);
         }
     }
 
@@ -112,7 +120,6 @@ public class App extends JFrame implements ActionListener {
         String path = "";
         JFileChooser fileChooser = new JFileChooser();
         FileSystemView fsv = FileSystemView.getFileSystemView();  //注意了，这里重要的一句
-        //System.out.println(fsv.getHomeDirectory());                //得到桌面路径
         fileChooser.setCurrentDirectory(fsv.getHomeDirectory());
         fileChooser.setDialogTitle("请选择要转换的CSV文件");
         fileChooser.setApproveButtonText("确定");
@@ -126,7 +133,7 @@ public class App extends JFrame implements ActionListener {
         return path;
     }
 
-    private void transferToExcel(String fileName) {
+    private void transferToExcel(String fileName,String charsetName) {
         File csvFile = new File(fileName);
         String folderPath = csvFile.getParent();
         String name = csvFile.getName();
@@ -134,7 +141,7 @@ public class App extends JFrame implements ActionListener {
         String excelFileName = folderPath + "\\" + subName + ".xlsx";
         File excelFile = new File(excelFileName);
         try {
-            InputStreamReader reader = new InputStreamReader(new FileInputStream(csvFile), "UTF-8");
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(csvFile), charsetName);
             BufferedReader bufferedReader = new BufferedReader(reader);
             OutputStream outputStream=new FileOutputStream(excelFile);
             List<String> list = new ArrayList<>();
@@ -164,6 +171,7 @@ public class App extends JFrame implements ActionListener {
                 }
             }
             workbook.write(outputStream);
+            outputStream.close();
             workbook.close();
         } catch (Exception ex) {
             lblInfo.setText(ex.getMessage());
