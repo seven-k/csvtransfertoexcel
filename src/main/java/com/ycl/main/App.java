@@ -152,6 +152,7 @@ public class App extends JFrame implements ActionListener {
             bufferedReader.close();
             reader.close();
             buildWorkbook(list,outputStream);
+            lblInfo.setText("---success---");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -164,7 +165,7 @@ public class App extends JFrame implements ActionListener {
             Sheet sheet = workbook.createSheet();
             for (int i = 0; i < contents.size(); i++) {
                 Row row = sheet.createRow(i);
-                String[] strs = contents.get(i).split(",");
+                String[] strs = contents.get(i).replace("\"","").split(",");
                 for (int j = 0; j < strs.length; j++) {
                     Cell cell = row.createCell(j);
                     cell.setCellValue(strs[j]);

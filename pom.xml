@@ -7,6 +7,11 @@
     <groupId>com.ycl</groupId>
     <artifactId>csvTransferToExcel</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compile.encoding>UTF-8</maven.compile.encoding>
+    </properties>
 
 
     <dependencies>
